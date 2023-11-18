@@ -3,13 +3,14 @@ from pathlib import Path
 from ffmpeg import FFmpeg, Progress
 from shlex import quote
 import re
+import Settings
 
 def __transform(video, outpath):
         ffmpeg_inputs = []
         ffmpeg_inputs.append(video['filepath'])
         ffmpeg_inputs.append(video['audio_tracks'])
         ffmpeg_inputs.append(video['subtitles'])
-        ffmpeg_output_path = os.path.join(transformed_path, video['filename']) + ".mkv"
+        ffmpeg_output_path = os.path.join(Settings.transformed_path, video['filename']) + ".mkv"
         map = ["0:0", "0:1"]
         ffmpeg = (
             FFmpeg()
@@ -18,7 +19,7 @@ def __transform(video, outpath):
             .input(video['filepath'])
         )
 
-        ffmpeg._executable='C:\\Users\\homeadmin\\Downloads\\jellyfin-ffmpeg_6.0-8-portable_win64\\ffmpeg.exe'
+        ffmpeg._executable = Settings.ffmpeg_exec_path
         
         i = 1
 
@@ -53,15 +54,14 @@ def __transform(video, outpath):
         
         
 
-torrent_path = "C:\\Users\\homeadmin\\Downloads\\Anime\\Vinland.Saga.Season2.WEBRip.1080p"
-transformed_path = r'C:\Users\homeadmin\Downloads\Anime\Vinland.Saga.Season2.WEBRip.1080p\transformed'
+
 #transformed_path = "C:\\transformed"
 
 
 audio_extensions = [".mka"]
 subtitle_extensions = [".ass"]
 
-all_files_paths = glob.glob(torrent_path + '\\**\\*', recursive=True)
+all_files_paths = glob.glob(Settings.torrent_path + '\\**\\*', recursive=True)
 
 video_paths = []
 
@@ -73,7 +73,7 @@ for video_path in video_paths:
     audio_tracks = list (filter(lambda x:Path(x).suffix in audio_extensions, related_files))
     subtitles = list (filter(lambda x:Path(x).suffix in subtitle_extensions, related_files))
     video = {'filename': video_file_name, 'filepath': video_path, 'audio_tracks': audio_tracks, 'subtitles': subtitles }
-    __transform(video,transformed_path)
+    __transform(video, Settings.transformed_path)
     print (video)
 
 
